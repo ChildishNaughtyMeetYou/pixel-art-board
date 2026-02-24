@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>像素画板</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="pixel-art-app">
+        <header class="app-header">
+            <h1 class="app-title">像素画板</h1>
+        </header>
+        
+        <div class="canvas-tip">
+            点击网格绘制像素画
+        </div>
+        
+        <div class="canvas-container">
+            <div class="grid-canvas" id="gridCanvas"></div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="action-btn import-btn" id="importBtn">
+                <span class="btn-icon">↑</span>
+                导入图片
+            </button>
+            <button class="action-btn export-btn" id="exportBtn">
+                <span class="btn-icon">↓</span>
+                导出图片
+            </button>
+            <button class="action-btn clear-btn" id="clearBtn">
+                <span class="btn-icon">×</span>
+                清空
+            </button>
+        </div>
+        
+        <div class="canvas-size-control">
+            <h3 class="control-label">画布大小</h3>
+            <div class="size-input-container">
+                <div class="size-display" id="sizeDisplay">18 x 18</div>
+                <input type="number" class="size-input" id="sizeInput" min="1" max="64" value="18">
+            </div>
+            <input type="range" class="size-slider" id="sizeSlider" min="1" max="64" value="18">
+        </div>
+        
+        <div class="color-selection">
+            <h3 class="control-label">选择颜色</h3>
+            <div class="color-grid" id="colorGrid"></div>
+        </div>
+        
+        <input type="file" id="imageInput" accept="image/*" style="display: none;">
+    </div>
+    
+    <script src="assets/colors.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
