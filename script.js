@@ -180,10 +180,36 @@ function setupEventListeners() {
         generateCanvas();
     }, 200));
     
+    sizeInput.addEventListener('blur', () => {
+        let value = parseInt(sizeInput.value) || 1;
+        value = Math.max(1, Math.min(64, value));
+        sizeInput.value = value;
+        if (canvasSize !== value) {
+            canvasSize = value;
+            sizeDisplay.textContent = `${canvasSize} x ${canvasSize}`;
+            sizeSlider.value = canvasSize;
+            generateCanvas();
+        }
+    });
+    
     importBtn.addEventListener('click', () => imageInput.click());
     imageInput.addEventListener('change', handleImageImport);
     exportBtn.addEventListener('click', exportCanvas);
     clearBtn.addEventListener('click', clearCanvas);
+    
+    const exportModal = document.getElementById('exportModal');
+    const exportCancelBtn = document.getElementById('exportCancelBtn');
+    const exportOptions = document.querySelectorAll('.export-option');
+    
+    exportCancelBtn.addEventListener('click', hideExportModal);
+    exportModal.addEventListener('click', (e) => {
+        if (e.target === exportModal) hideExportModal();
+    });
+    exportOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            exportByType(option.dataset.type);
+        });
+    });
 }
 
 function handleImageImport(e) {
@@ -219,39 +245,201 @@ function pixelateImage(img) {
     }
 }
 
+// 显示/隐藏导出选项弹窗
+function showExportModal() {
+    document.getElementById('exportModal').classList.add('active');
+}
+
+function hideExportModal() {
+    document.getElementById('exportModal').classList.remove('active');
+}
+
+// 导出入口函数
 function exportCanvas() {
+    showExportModal();
+}
+
+// 根据类型导出
+function exportByType(type) {
+    hideExportModal();
+    if (type === 'pixel-grid') exportPixelArt(true);
+    else if (type === 'pixel-clean') exportPixelArt(false);
+    else if (type === 'perler') exportPerlerBeads();
+}
+
+// 导出像素画
+function exportPixelArt(withGrid) {
     const exportCanvas = document.createElement('canvas');
     const exportCtx = exportCanvas.getContext('2d');
     const cellSize = 20;
-    const width = canvasSize * cellSize + canvasSize + 1;
-    exportCanvas.width = width;
-    exportCanvas.height = width;
-    exportCtx.fillStyle = '#2a2a2a';
-    exportCtx.fillRect(0, 0, width, width);
+    const canvasWidth = withGrid ? canvasSize * cellSize + canvasSize + 1 : canvasSize * cellSize;
+    const canvasHeight = withGrid ? canvasSize * cellSize + canvasSize + 1 : canvasSize * cellSize;
+    
+    exportCanvas.width = canvasWidth;
+    exportCanvas.height = canvasHeight;
+    
+    if (withGrid) {
+        exportCtx.fillStyle = '#2a2a2a';
+        exportCtx.fillRect(0, 0, canvasWidth, canvasHeight);
+    }
+    
     for (let y = 0; y < canvasSize; y++) {
         for (let x = 0; x < canvasSize; x++) {
             const color = gridCells[y][x]?.style.backgroundColor || '#ffffff';
             exportCtx.fillStyle = color;
-            exportCtx.fillRect(x * cellSize + x + 1, y * cellSize + y + 1, cellSize, cellSize);
+            if (withGrid) {
+                exportCtx.fillRect(x * cellSize + x + 1, y * cellSize + y + 1, cellSize, cellSize);
+            } else {
+                exportCtx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+            }
         }
     }
-    exportCtx.strokeStyle = '#444444';
-    for (let i = 0; i <= canvasSize; i++) {
-        exportCtx.beginPath();
-        exportCtx.moveTo(i * cellSize + i, 0);
-        exportCtx.lineTo(i * cellSize + i, width);
-        exportCtx.stroke();
-        exportCtx.beginPath();
-        exportCtx.moveTo(0, i * cellSize + i);
-        exportCtx.lineTo(width, i * cellSize + i);
-        exportCtx.stroke();
+    
+    if (withGrid) {
+        exportCtx.strokeStyle = '#444444';
+        for (let x = 0; x <= canvasSize; x++) {
+            exportCtx.beginPath();
+            exportCtx.moveTo(x * cellSize + x, 0);
+            exportCtx.lineTo(x * cellSize + x, canvasHeight);
+            exportCtx.stroke();
+        }
+        for (let y = 0; y <= canvasSize; y++) {
+            exportCtx.beginPath();
+            exportCtx.moveTo(0, y * cellSize + y);
+            exportCtx.lineTo(canvasWidth, y * cellSize + y);
+            exportCtx.stroke();
+        }
     }
+    
+    const dataURL = exportCanvas.toDataURL('image/png');
+    const suffix = withGrid ? '带格子' : '无格子';
+    saveImage(dataURL, `像素画_${canvasSize}x${canvasSize}_${suffix}`);
+}
+
+// 导出拼豆格式
+function exportPerlerBeads() {
+    const exportCanvas = document.createElement('canvas');
+    const exportCtx = exportCanvas.getContext('2d');
+    const beadSize = 24;
+    const gap = 4;
+    const canvasWidth = canvasSize * (beadSize + gap) + gap;
+    const canvasHeight = canvasSize * (beadSize + gap) + gap;
+    
+    exportCanvas.width = canvasWidth;
+    exportCanvas.height = canvasHeight;
+    
+    exportCtx.fillStyle = '#1a1a1a';
+    exportCtx.fillRect(0, 0, canvasWidth, canvasHeight);
+    
+    for (let y = 0; y < canvasSize; y++) {
+        for (let x = 0; x < canvasSize; x++) {
+            const color = gridCells[y][x]?.style.backgroundColor || '#ffffff';
+            const centerX = gap + x * (beadSize + gap) + beadSize / 2;
+            const centerY = gap + y * (beadSize + gap) + beadSize / 2;
+            
+            // 阴影
+            exportCtx.beginPath();
+            exportCtx.arc(centerX + 2, centerY + 2, beadSize / 2 - 2, 0, Math.PI * 2);
+            exportCtx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            exportCtx.fill();
+            
+            // 主体
+            exportCtx.beginPath();
+            exportCtx.arc(centerX, centerY, beadSize / 2 - 2, 0, Math.PI * 2);
+            exportCtx.fillStyle = color;
+            exportCtx.fill();
+            
+            // 高光
+            exportCtx.beginPath();
+            exportCtx.arc(centerX - 4, centerY - 4, beadSize / 6, 0, Math.PI * 2);
+            exportCtx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+            exportCtx.fill();
+        }
+    }
+    
+    const dataURL = exportCanvas.toDataURL('image/png');
+    saveImage(dataURL, `拼豆画_${canvasSize}x${canvasSize}`);
+}
+
+// 保存图片
+function saveImage(dataURL, fileName) {
+    if (window.plus) {
+        const androidVersion = parseInt(plus.os.version);
+        if (androidVersion >= 6) {
+            plus.android.requestPermissions(['android.permission.WRITE_EXTERNAL_STORAGE'], function(result) {
+                if (result.granted.length > 0) {
+                    saveImageToGallery(dataURL, fileName);
+                } else {
+                    plus.nativeUI.alert('需要存储权限才能保存图片', function() {
+                        fallbackDownload(dataURL, fileName);
+                    }, '权限请求失败', '确定');
+                }
+            }, function() {
+                fallbackDownload(dataURL, fileName);
+            });
+        } else {
+            saveImageToGallery(dataURL, fileName);
+        }
+    } else {
+        fallbackDownload(dataURL, fileName);
+    }
+}
+
+function saveImageToGallery(dataURL, customFileName) {
+    try {
+        plus.nativeUI.showWaiting('正在保存图片...');
+        const fileName = '_doc/' + (customFileName || '像素画_' + Date.now()) + '.png';
+        const bitmap = new plus.nativeObj.Bitmap('export');
+        bitmap.loadBase64Data(dataURL, function() {
+            bitmap.save(fileName, { overwrite: true, quality: 100 }, function(e) {
+                plus.gallery.save(e.target, function() {
+                    plus.nativeUI.closeWaiting();
+                    plus.nativeUI.toast('图片已保存到相册');
+                    plus.io.resolveLocalFileSystemURL(e.target, function(entry) { entry.remove(); });
+                }, function() {
+                    plus.nativeUI.closeWaiting();
+                    showImageForScreenshot(dataURL);
+                });
+            }, function() {
+                plus.nativeUI.closeWaiting();
+                showImageForScreenshot(dataURL);
+            });
+        }, function() {
+            plus.nativeUI.closeWaiting();
+            showImageForScreenshot(dataURL);
+        });
+    } catch (e) {
+        plus.nativeUI.closeWaiting();
+        showImageForScreenshot(dataURL);
+    }
+}
+
+function showImageForScreenshot(dataURL) {
+    plus.nativeUI.alert('自动保存失败，请截图保存图片', function() {
+        plus.webview.create('_blank', 'screenshot', {
+            top: '0px', bottom: '0px', background: 'transparent'
+        }, {
+            content: '<html><head><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"></head><body style="margin:0;padding:20px;background:#1a1a1a;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;"><img src="' + dataURL + '" style="max-width:100%;max-height:80vh;"><p style="color:#fff;margin-top:20px;">请截图保存此图片</p></body></html>'
+        }).show();
+    }, '提示', '确定');
+}
+
+function fallbackDownload(dataURL, customFileName) {
     const link = document.createElement('a');
-    link.href = exportCanvas.toDataURL('image/png');
-    link.download = `像素画_${canvasSize}x${canvasSize}.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    link.href = dataURL;
+    link.download = (customFileName || `像素画_${canvasSize}x${canvasSize}`) + '.png';
+    try {
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    } catch (e) {
+        const newWindow = window.open('', '_blank');
+        if (newWindow) {
+            newWindow.document.write(`<img src="${dataURL}" style="max-width:100%;height:auto;" /><p>长按图片保存到相册</p>`);
+        } else {
+            alert('请截图保存图片');
+        }
+    }
 }
 
 function clearCanvas() {
