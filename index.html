@@ -12,9 +12,7 @@
             <h1 class="app-title">像素画板</h1>
         </header>
         
-        <div class="canvas-tip">
-            点击网格绘制像素画
-        </div>
+        <div class="canvas-tip">点击网格绘制像素画</div>
         
         <div class="canvas-container">
             <div class="grid-canvas" id="gridCanvas"></div>
@@ -22,16 +20,13 @@
         
         <div class="action-buttons">
             <button class="action-btn import-btn" id="importBtn">
-                <span class="btn-icon">↑</span>
-                导入图片
+                <span class="btn-icon">↑</span>导入图片
             </button>
             <button class="action-btn export-btn" id="exportBtn">
-                <span class="btn-icon">↓</span>
-                导出图片
+                <span class="btn-icon">↓</span>导出图片
             </button>
             <button class="action-btn clear-btn" id="clearBtn">
-                <span class="btn-icon">×</span>
-                清空
+                <span class="btn-icon">×</span>清空
             </button>
         </div>
         
@@ -50,6 +45,36 @@
         </div>
         
         <input type="file" id="imageInput" accept="image/*" style="display: none;">
+        
+        <div class="export-modal" id="exportModal">
+            <div class="export-modal-content">
+                <h3 class="export-modal-title">选择导出格式</h3>
+                <div class="export-options">
+                    <div class="export-option" data-type="pixel-grid">
+                        <div class="export-option-icon">▦</div>
+                        <div class="export-option-text">
+                            <div class="export-option-title">像素画（带格子）</div>
+                            <div class="export-option-desc">包含网格线的像素画</div>
+                        </div>
+                    </div>
+                    <div class="export-option" data-type="pixel-clean">
+                        <div class="export-option-icon">▢</div>
+                        <div class="export-option-text">
+                            <div class="export-option-title">像素画（无格子）</div>
+                            <div class="export-option-desc">纯净的像素画</div>
+                        </div>
+                    </div>
+                    <div class="export-option" data-type="perler">
+                        <div class="export-option-icon">●</div>
+                        <div class="export-option-text">
+                            <div class="export-option-title">拼豆格式</div>
+                            <div class="export-option-desc">圆形拼豆样式</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="export-cancel-btn" id="exportCancelBtn">取消</button>
+            </div>
+        </div>
     </div>
     
     <script src="assets/colors.js"></script>
