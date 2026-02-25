@@ -126,9 +126,7 @@ body {
     font-weight: bold;
 }
 
-.canvas-size-control {
-    margin-bottom: 30px;
-}
+.canvas-size-control { margin-bottom: 30px; }
 
 .control-label {
     font-size: 16px;
@@ -185,13 +183,9 @@ body {
     cursor: pointer;
 }
 
-.color-selection {
-    margin-bottom: 30px;
-}
+.color-selection { margin-bottom: 30px; }
 
-.color-section {
-    margin-bottom: 20px;
-}
+.color-section { margin-bottom: 20px; }
 
 .color-section-title {
     font-size: 14px;
@@ -206,9 +200,7 @@ body {
     gap: 6px;
 }
 
-.color-grid {
-    margin-top: 10px;
-}
+.color-grid { margin-top: 10px; }
 
 .color-swatch {
     width: 100%;
@@ -219,9 +211,7 @@ body {
     transition: transform var(--transition-normal), border-color var(--transition-normal);
 }
 
-.color-swatch:hover {
-    transform: scale(1.1);
-}
+.color-swatch:hover { transform: scale(1.1); }
 
 .color-swatch.active {
     border-color: var(--text-primary);
@@ -240,10 +230,7 @@ body {
         min-height: 12px;
         touch-action: manipulation;
     }
-    .action-btn {
-        padding: 12px 16px;
-        font-size: 16px;
-    }
+    .action-btn { padding: 12px 16px; font-size: 16px; }
 }
 
 @keyframes fadeIn {
@@ -251,7 +238,98 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-.grid-canvas, .action-btn, .color-swatch {
-    transform: translateZ(0);
-    will-change: transform;
+/* 导出选项弹窗 */
+.export-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
 }
+
+.export-modal.active { display: flex; }
+
+.export-modal-content {
+    background-color: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 20px;
+    width: 90%;
+    max-width: 320px;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.export-modal-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--color-primary);
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.export-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.export-option {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background-color: var(--bg-primary);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    border: 2px solid transparent;
+}
+
+.export-option:hover, .export-option:active {
+    border-color: var(--color-primary);
+    background-color: rgba(33, 150, 243, 0.1);
+}
+
+.export-option-icon {
+    font-size: 28px;
+    margin-right: 15px;
+    color: var(--color-primary);
+    width: 40px;
+    text-align: center;
+}
+
+.export-option-text { flex: 1; }
+
+.export-option-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.export-option-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.export-cancel-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--bg-grid);
+    border: none;
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.export-cancel-btn:hover { background-color: #555; }
