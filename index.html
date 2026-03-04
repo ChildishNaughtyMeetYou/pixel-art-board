@@ -5,31 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>像素画板</title>
     <link rel="stylesheet" href="style.css">
-</head>
+</head><!-- 导出修复版本4-->
 <body>
+    <!-- 星星容器（夜间模式） -->
+    <div class="stars-container" id="starsContainer"></div>
+    
+    <!-- 云朵容器（白天模式） -->
+    <div class="clouds-container" id="cloudsContainer"></div>
+    
     <div class="pixel-art-app">
+        <!-- 顶部标题栏 -->
         <header class="app-header">
             <h1 class="app-title">像素画板</h1>
         </header>
         
-        <div class="canvas-tip">点击网格绘制像素画</div>
+        <!-- 提示文字 -->
+        <div class="canvas-tip">
+            点击网格绘制像素画
+            <button class="theme-toggle" id="themeToggle" title="切换主题">
+                <span class="theme-icon">🌙</span>
+            </button>
+        </div>
         
+        <!-- 画布区域 -->
         <div class="canvas-container">
             <div class="grid-canvas" id="gridCanvas"></div>
         </div>
         
+        <!-- 操作按钮区 -->
         <div class="action-buttons">
             <button class="action-btn import-btn" id="importBtn">
-                <span class="btn-icon">↑</span>导入图片
+                <span class="btn-icon">📥</span>
+                <span class="btn-text">导入</span>
             </button>
             <button class="action-btn export-btn" id="exportBtn">
-                <span class="btn-icon">↓</span>导出图片
+                <span class="btn-icon">📤</span>
+                <span class="btn-text">导出</span>
             </button>
             <button class="action-btn clear-btn" id="clearBtn">
-                <span class="btn-icon">×</span>清空
+                <span class="btn-icon">🗑️</span>
+                <span class="btn-text">清空</span>
             </button>
         </div>
         
+        <!-- 画布大小调整 -->
         <div class="canvas-size-control">
             <h3 class="control-label">画布大小</h3>
             <div class="size-input-container">
@@ -39,13 +58,16 @@
             <input type="range" class="size-slider" id="sizeSlider" min="1" max="64" value="18">
         </div>
         
+        <!-- 颜色选择区域 -->
         <div class="color-selection">
             <h3 class="control-label">选择颜色</h3>
             <div class="color-grid" id="colorGrid"></div>
         </div>
         
+        <!-- 图片导入输入 -->
         <input type="file" id="imageInput" accept="image/*" style="display: none;">
         
+        <!-- 导出选项弹窗 -->
         <div class="export-modal" id="exportModal">
             <div class="export-modal-content">
                 <h3 class="export-modal-title">选择导出格式</h3>
@@ -75,8 +97,35 @@
                 <button class="export-cancel-btn" id="exportCancelBtn">取消</button>
             </div>
         </div>
+        
+        <!-- 拼豆设置弹窗 -->
+        <div class="perler-modal" id="perlerModal">
+            <div class="perler-modal-content">
+                <h3 class="perler-modal-title">拼豆导出设置</h3>
+                
+                <!-- 背景颜色去除 -->
+                <div class="perler-setting-section">
+                    <h4 class="perler-setting-label">背景颜色去除</h4>
+                    <p class="perler-setting-desc">点击预览画布中的颜色可将其设为透明背景</p>
+                    <div class="perler-canvas-preview" id="perlerCanvasPreview"></div>
+                    <div class="perler-ignore-color">
+                        <span class="perler-ignore-label">已选背景色：</span>
+                        <div class="perler-ignore-swatch" id="perlerIgnoreSwatch"></div>
+                        <span class="perler-ignore-hex" id="perlerIgnoreHex">无</span>
+                        <button class="perler-clear-ignore" id="perlerClearIgnore">清除</button>
+                    </div>
+                </div>
+                
+                <!-- 按钮区域 -->
+                <div class="perler-modal-buttons">
+                    <button class="perler-cancel-btn" id="perlerCancelBtn">取消</button>
+                    <button class="perler-confirm-btn" id="perlerConfirmBtn">确认导出</button>
+                </div>
+            </div>
+        </div>
     </div>
     
+    <!-- 脚本文件 -->
     <script src="assets/colors.js"></script>
     <script src="script.js"></script>
 </body>
